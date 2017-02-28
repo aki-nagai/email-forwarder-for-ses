@@ -10,5 +10,19 @@ exports.handler = (event, context, callback) => {
   // http://docs.aws.amazon.com/ses/latest/DeveloperGuide/receiving-email-notifications-contents.html 
   var sesNotification = event.Records[0].ses;
   console.log("SES Notification:\n", JSON.stringify(sesNotification, null, 2));
-  callback(null, null);
+
+  // The sesNotification doesn't contain email raw content
+  // So we must store email row content to S3 before run this lambda action
+  s3.getObject({
+    Bucket: bucketName,
+    Key: sesNotification.mail.messageId // S3 objects are named using message id
+  }, function(err, data) {
+    if (err) {
+        console.log(err, err.stack);
+        callback(err);
+    } else {
+        console.log("Raw email:\n" + data.Body);
+        callback(null, null);
+    }
+  });
 };
