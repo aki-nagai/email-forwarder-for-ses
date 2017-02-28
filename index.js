@@ -1,3 +1,8 @@
+var AWS = require('aws-sdk');  // AWS SDK for nodejs is preinstalled
+var s3 = new AWS.S3();
+ 
+var bucketName = process.env.BUCKET_NAME;
+
 // Func: Lambda handler
 exports.handler = (event, context, callback) => {
   // Amazon SES passes information to the Lambda function in JSON format
